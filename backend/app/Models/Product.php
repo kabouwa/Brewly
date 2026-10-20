@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Product extends Model
@@ -31,6 +32,10 @@ class Product extends Model
     {
         static::creating(function (Product $product) {
             $product->reference = 'PRD-' . now()->format('ymd') . '-' . strtoupper( Str::random(2) ) . random_int(10,99);
+        });
+
+        static::deleting(function ($product) {
+            if (!is_null($product->image)) Storage::disk('public')->delete($product->image);
         });
     }
 }
