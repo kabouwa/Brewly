@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use PhpParser\Node\Expr\BinaryOp\BooleanOr;
 
-class CategoryRessource extends JsonResource
+class CategoryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,11 +17,11 @@ class CategoryRessource extends JsonResource
     {
         // return parent::toArray($request);
         return [
-            'title' => $this->title,
-            'slug' => $this->slug,
-            'active' => (Boolean) $this->active,
-            'created_at' => $this->created_at->format('M d, Y · H:i'),
-            'updated_at' => $this->updated_at->format('M d, Y · H:i'),
+            "title" => $this->title,
+            "slug" => $this->slug,
+            "active" => (Boolean) $this->active,
+            "created_at" => $this->created_at->format('M d, Y · H:i'),
+            "updated_at" => $this->updated_at->format('M d, Y · H:i'),
         ];
     }
 }

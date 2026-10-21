@@ -17,7 +17,7 @@ class OrderFactory extends Factory
      */
     public function definition(): array
     {
-        $status = ['PENDING','PREPRING','READY','COMPLETED','CANCELED'];
+        $status = ['PENDING','PREPARING','READY','COMPLETED','CANCELED'];
 
         return [
             'note' => fake()->sentences(random_int(0,5), true),

@@ -37,6 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 $request->is('api/categories/*') => 'Category',
                 $request->is('api/products/*') => 'Product',
                 $request->is('api/orders/*') => 'Order',
+                $request->is('api/order-items/*') => 'Order item',
             };
 
             return response()->json([

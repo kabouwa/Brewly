@@ -3,15 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CategoryRessource;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
     public function index(Request $request)
     {
+
         $categories = Category::when($request->search, function ($query) use ($request){
                 $query->where('title', 'LIKE', '%' . $request->search . '%');
             })
@@ -20,26 +22,28 @@ class CategoryController extends Controller
             })
             ->get();
 
+
         return response()->json([
             "success" => true,
-            "message"=> "Categories retrieved successfully",
+            "message"=> "Categories retrieved successfully.",
             "total" => $categories->count(),
-            "data" => CategoryRessource::collection($categories)
+            "data" => CategoryResource::collection($categories)
         ], 200);
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'title' => ['required','string','min:3','max:255',Rule::unique(Category::class)]
+            'title' => ['required','string','min:3','max:255', Rule::unique(Category::class)],
+            'active' => ['nullable', 'boolean']
         ]);
 
         $category = Category::create($data);
 
         return response()->json([
             "success" => true,
-            "message"=> "Category created successfully",
-            "data" => new CategoryRessource($category)
+            "message"=> "Category created successfully.",
+            "data" => new CategoryResource($category)
         ], 201);
     }
 
@@ -47,8 +51,8 @@ class CategoryController extends Controller
     {
         return response()->json([
             "success" => true,
-            "message"=> "Category retrieved successfully",
-            "data" => new CategoryRessource($category)
+            "message"=> "Category retrieved successfully.",
+            "data" => new CategoryResource($category)
         ], 200);
     }
 
@@ -62,8 +66,8 @@ class CategoryController extends Controller
 
         return response()->json([
             "success" => true,
-            "message"=> "Category updated successfully",
-            "data" => new CategoryRessource($category)
+            "message"=> "Category updated successfully.",
+            "data" => new CategoryResource($category)
         ], 200);
     }
 
@@ -75,8 +79,8 @@ class CategoryController extends Controller
 
         return response()->json([
             "success" => true,
-            "message"=> "Category " . ($category->active ? 'activated' : 'disabled') . " successfully",
-            "data" => new CategoryRessource($category)
+            "message"=> "Category " . ($category->active ? 'activated' : 'disabled') . " successfully.",
+            "data" => new CategoryResource($category)
         ], 200);
     }
 
@@ -86,8 +90,7 @@ class CategoryController extends Controller
 
         return response()->json([
             "success" => true,
-            "message"=> "Category deleted successfully",
-            "data" => null
+            "message"=> "Category deleted successfully.",
         ]);
     }
 }

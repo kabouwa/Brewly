@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
-use App\Http\Resources\ProductRessource;
+use App\Http\Resources\ProductResource;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -33,9 +33,9 @@ class ProductController extends Controller
 
         return response()->json([
             "success" => true,
-            "message"=> "Products retrieved successfully",
+            "message"=> "Products retrieved successfully.",
             "total" => $products->count(),
-            "data" => ProductRessource::collection($products)
+            "data" => ProductResource::collection($products)
         ], 200);
     }
 
@@ -53,8 +53,8 @@ class ProductController extends Controller
 
         return response()->json([
             "success" => true,
-            "message"=> "Product created successfully",
-            "data" => new ProductRessource(Product::find($product->id))
+            "message"=> "Product created successfully.",
+            "data" => new ProductResource(Product::find($product->id))
         ], 201);
     }
 
@@ -64,8 +64,8 @@ class ProductController extends Controller
 
         return response()->json([
             "success" => true,
-            "message"=> "Product retrieved successfully",
-            "data" => new ProductRessource($product)
+            "message"=> "Product retrieved successfully.",
+            "data" => new ProductResource($product)
         ], 200);
     }
 
@@ -91,8 +91,8 @@ class ProductController extends Controller
 
         return response()->json([
             "success" => true,
-            "message"=> "Products updated successfully",
-            "data" => new ProductRessource($product)
+            "message"=> "Products updated successfully.",
+            "data" => new ProductResource($product)
         ], 200);
     }
 
@@ -104,8 +104,8 @@ class ProductController extends Controller
 
         return response()->json([
             "success" => true,
-            "message"=> "Products " . ($product->active ? 'activated' : 'disabled') . " successfully",
-            "data" => new ProductRessource($product)
+            "message"=> "Products " . ($product->active ? 'activated' : 'disabled') . " successfully.",
+            "data" => new ProductResource($product)
         ], 200);
     }
 
@@ -115,7 +115,7 @@ class ProductController extends Controller
 
         return response()->json([
             "success" => true,
-            "message"=> "Product deleted successfully",
+            "message"=> "Product deleted successfully.",
             "data" => null
         ]);
     }

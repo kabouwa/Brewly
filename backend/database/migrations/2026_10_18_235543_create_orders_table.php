@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('reference')->unique();
-            $table->decimal('total_price', 10, 2);
-            $table->enum('status', ['PENDING','PREPRING','READY','COMPLETED','CANCELED']);
+            $table->decimal('total_price', 10, 2)->default(0);
+            $table->enum('status', ['PENDING','PREPARING','READY','COMPLETED','CANCELED'])->default('PENDING');
             $table->text('note')->nullable();
             $table->timestamps();
         });
