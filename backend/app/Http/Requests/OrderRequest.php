@@ -28,6 +28,7 @@ class OrderRequest extends FormRequest
         return [
             'status' => ['nullable','string',Rule::in($this->statues)],
             'note' => ['nullable','string'],
+            'table' => ['nullable','integer','min:0','max:1000'],
             'items' => ['required','array','min:1'],
             'items.*' => ['required','array'],
             'items.*.product_reference' => ['required','string',Rule::exists(Product::class, 'reference')],

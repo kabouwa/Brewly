@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('reference')->unique();
             $table->decimal('total_price', 10, 2)->default(0);
             $table->enum('status', ['PENDING','PREPARING','READY','COMPLETED','CANCELED'])->default('PENDING');
+            $table->unsignedInteger('table')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
         });

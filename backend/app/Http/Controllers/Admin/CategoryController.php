@@ -13,6 +13,7 @@ class CategoryController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Category::class);
 
         $categories = Category::when($request->search, function ($query) use ($request){
                 $query->where('title', 'LIKE', '%' . $request->search . '%');
@@ -33,9 +34,11 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorize('create', Category::class);
+
         $data = $request->validate([
             'title' => ['required','string','min:3','max:255', Rule::unique(Category::class)],
-            'active' => ['nullable', 'boolean']
+            'active' => ['sometimes', 'boolean']
         ]);
 
         $category = Category::create($data);
@@ -49,6 +52,8 @@ class CategoryController extends Controller
 
     public function show(Category $category)
     {
+        $this->authorize('view', $category);
+
         return response()->json([
             "success" => true,
             "message"=> "Category retrieved successfully.",
@@ -58,8 +63,11 @@ class CategoryController extends Controller
 
     public function update(Request $request, Category $category)
     {
+        $this->authorize('update', $category);
+
         $data = $request->validate([
-            'title' => ['required','string','min:3','max:255',Rule::unique(Category::class)->ignore($category)]
+            'title' => ['required','string','min:3','max:255',Rule::unique(Category::class)->ignore($category)],
+            'active' => ['sometimes', 'boolean']
         ]);
 
         $category->update($data);
@@ -73,6 +81,8 @@ class CategoryController extends Controller
 
     public function toggle(Category $category)
     {
+        $this->authorize('update', $category);
+
         $category->update([
             'active' => !$category->active
         ]);
@@ -86,11 +96,14 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
+        $this->authorize('delete', $category);
+
         $category->delete();
 
         return response()->json([
             "success" => true,
             "message"=> "Category deleted successfully.",
+            "data" => null
         ]);
     }
 }

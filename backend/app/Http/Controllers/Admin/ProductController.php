@@ -22,6 +22,8 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Product::class);
+
         $products = Product::with('category')
             ->when($request->search, function ($query) use ($request){
                 $query->where('title', 'LIKE', '%' . $request->search . '%');
@@ -41,6 +43,8 @@ class ProductController extends Controller
 
     public function store(ProductRequest $request)
     {
+        $this->authorize('create', Product::class);
+
         $data = $request->validated();
         $this->setCategory($data);
 
@@ -60,6 +64,8 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
+        $this->authorize('view', $product);
+
         $product->load('category');
 
         return response()->json([
@@ -71,6 +77,8 @@ class ProductController extends Controller
 
     public function update(ProductRequest $request, Product $product)
     {
+        $this->authorize('update', $product);
+
         $data = $request->validated();
         $this->setCategory($data);
 
@@ -98,6 +106,8 @@ class ProductController extends Controller
 
     public function toggle(Product $product)
     {
+        $this->authorize('update', $product);
+
         $product->update([
             'active' => !$product->active
         ]);
@@ -111,6 +121,8 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
+        $this->authorize('delete', $product);
+
         $product->delete();
 
         return response()->json([

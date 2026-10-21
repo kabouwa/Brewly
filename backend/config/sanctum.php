@@ -6,7 +6,7 @@ use Laravel\Sanctum\Http\Middleware\AuthenticateSession;
 use Laravel\Sanctum\Sanctum;
 
 return [
-
+    'routes' => false,
     /*
     |--------------------------------------------------------------------------
     | Stateful Domains

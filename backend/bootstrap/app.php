@@ -14,9 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->api(prepend: [
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-        ]);
+        // $middleware->api(prepend: [
+        //     \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        // ]);
 
         $middleware->alias([
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
@@ -34,10 +34,12 @@ return Application::configure(basePath: dirname(__DIR__))
             if(! $request->is('api/*')) return ;
 
             $message = match(true) {
+                $request->is('api/users/*') => 'User',
                 $request->is('api/categories/*') => 'Category',
                 $request->is('api/products/*') => 'Product',
                 $request->is('api/orders/*') => 'Order',
                 $request->is('api/order-items/*') => 'Order item',
+                default => 'Resource'
             };
 
             return response()->json([

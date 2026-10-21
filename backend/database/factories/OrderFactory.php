@@ -22,7 +22,8 @@ class OrderFactory extends Factory
         return [
             'note' => fake()->sentences(random_int(0,5), true),
             'total_price' => fake()->randomFloat(2,100,800),
-            'status' =>  $status[array_rand($status)]
+            'status' =>  $status[array_rand($status)],
+            'table' => random_int(1,50)
         ];
     }
 }

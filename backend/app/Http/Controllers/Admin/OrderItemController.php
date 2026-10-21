@@ -13,23 +13,10 @@ use Illuminate\Support\Facades\DB;
 
 class OrderItemController extends Controller
 {
-    private function updateFormData(array &$data)
-    {
-        $product = Product::where('reference', $data['product_reference'])->first(['id','stock','selling_price','purchase_price']);
-        $data['product_id'] = $product->id;
-        $data['selling_price'] = $product->selling_price;
-        $data['purchase_price'] = $product->purchase_price;
-        unset($data['product_reference']);
-
-        $order = Order::where('reference', $data['order_reference'])->first(['id']);
-        $data['order_id'] = $order->id;
-        unset($data['order_reference']);
-
-        return $product;
-    }
-
     public function index(Request $request)
     {
+        $this->authorize('viewAny', OrderItem::class);
+
         $orderItems = OrderItem::with(['product.category', 'order'])
             ->when($request->status, function ($query) use ($request){
                 $query->where('status', $request->status);
@@ -46,8 +33,30 @@ class OrderItemController extends Controller
 
     public function store(OrderItemRequest $request)
     {
+        $this->authorize('create', OrderItem::class);
+
         $data = $request->validated();
-        $product = $this->updateFormData($data);
+
+        $product = Product::where('reference', $data['product_reference'])->first(['id','stock','selling_price','purchase_price']);
+        $data['product_id'] = $product->id;
+        $data['selling_price'] = $product->selling_price;
+        $data['purchase_price'] = $product->purchase_price;
+        unset($data['product_reference']);
+
+        $order = Order::where('reference', $data['order_reference'])->first(['id']);
+        $data['order_id'] = $order->id;
+        unset($data['order_reference']);
+
+        if ($order->status !== 'PREPARING') {
+            return response()->json([
+                "success" => false,
+                "message"=> "Order items can only be added when the order is in PREPARING status.",
+                "errors" => [
+                    "quantity" => ["Order items can only be added when the order is in PREPARING status."]
+                ],
+                "data" => null
+            ], 422);
+        }
 
         if ($data['quantity'] > $product->stock) {
             return response()->json([
@@ -56,6 +65,7 @@ class OrderItemController extends Controller
                 "errors" => [
                     "quantity" => ["Quantity exceeds the available stock."]
                 ],
+                "data" => null
             ], 422);
         }
 
@@ -76,6 +86,8 @@ class OrderItemController extends Controller
 
     public function show(OrderItem $orderItem)
     {
+        $this->authorize('view', $orderItem);
+
         $orderItem->load(['product.category','order']);
 
         return response()->json([
@@ -87,6 +99,8 @@ class OrderItemController extends Controller
 
     public function update(Request $request, OrderItem $orderItem)
     {
+        $this->authorize('update', $orderItem);
+
         $data = $request->validate([
             'quantity' => ['required', 'integer', 'min:1']
         ]);
@@ -104,6 +118,7 @@ class OrderItemController extends Controller
                     "errors" => [
                         "quantity" => ["Quantity exceeds the available stock."]
                     ],
+                    "data" => null
                 ], 422);
             }
 
@@ -130,6 +145,8 @@ class OrderItemController extends Controller
 
     public function destroy(OrderItem $orderItem)
     {
+        $this->authorize('delete', $orderItem);
+
         $orderItem->delete();
 
         return response()->json([

@@ -21,12 +21,14 @@ class OrderController extends Controller
             if ( is_null($order) ) {
                 $order = Order::create([
                     'status' => $data['status'] ?? 'PENDING',
+                    'table' => $data['table'] ?? null,
                     'total_price' => 0,
                     'note' => $data['note'] ?? null,
                 ]);
             }else {
                 $order->update([
                     'note' => $data['note'] ?? null,
+                    'table' => $data['table'] ?? null,
                     'status' => $data['status'] ?? $order->status,
                 ]);
                 foreach($order->items as $item) $item->delete();
@@ -71,6 +73,8 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Order::class);
+
         // All orders without items
         $orders = Order::when($request->status, function ($query) use ($request){
                 $query->where('status', $request->status);
@@ -87,6 +91,8 @@ class OrderController extends Controller
 
     public function store(OrderRequest $request)
     {
+        $this->authorize('create', Order::class);
+
         $data = $request->validated();
 
         $order = $this->handleOrder($data);
@@ -100,6 +106,8 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
+        $this->authorize('view', $order);
+
         // One order with items products and categories
         $order->load('items.product.category');
 
@@ -112,6 +120,8 @@ class OrderController extends Controller
 
     public function update(OrderRequest $request, Order $order)
     {
+        $this->authorize('update', $order);
+
         $data = $request->validated();
 
         $order = $this->handleOrder($data, $order);
@@ -123,19 +133,10 @@ class OrderController extends Controller
         ], 200);
     }
 
-    public function destroy(Order $order)
-    {
-        $order->delete();
-
-        return response()->json([
-            "success" => true,
-            "message"=> "Order deleted successfully.",
-            "data" => null
-        ]);
-    }
-
     public function status(Request $request, Order $order)
     {
+        $this->authorize('updateStatus', $order);
+
         $statues = ['PENDING','PREPARING','READY','COMPLETED','CANCELED'];
 
         $data = $request->validate([
@@ -150,6 +151,19 @@ class OrderController extends Controller
             "success" => true,
             "message"=> "Order status updated successfully to " . strtolower($data['status']) . ".",
             "data" => null
-        ]);
+        ], 200);
+    }
+
+    public function destroy(Order $order)
+    {
+        $this->authorize('delete', $order);
+
+        $order->delete();
+
+        return response()->json([
+            "success" => true,
+            "message"=> "Order deleted successfully.",
+            "data" => null
+        ], 200);
     }
 }
