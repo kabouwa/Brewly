@@ -11,7 +11,7 @@ Route::get('/', function () {
             'version' => '1.0.0',
         ],
     ]);
-});
+})->name('home')->middleware('throttle:20,1');
 
 // Generated authentication
 // require __DIR__.'/auth.php';

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
 
     // Authentication
-    Route::post('/login', [AuthController::class, 'login'])->name('login')->middleware('throttle:5,1');
+    Route::post('/login', [AuthController::class, 'login'])->name('login')->middleware('throttle:7,1');
 
     Route::middleware(['auth:sanctum','throttle:60,1'])->group(function () {
 
