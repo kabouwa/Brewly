@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\Public\ProductResource as PublicProductResource;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
@@ -30,14 +30,22 @@ class ProductController extends Controller
             })
             ->when($request->has('active'), function ($query) use ($request){
                 $query->where('active', (boolean) $request->active);
-            })
-            ->get();
+            });
+
+        if (!auth()->check()) {
+            $products->whereActive(true)
+                ->whereHas('category', fn($q) => $q->whereActive(true));
+        }
+
+        $products = $products->get();
 
         return response()->json([
             "success" => true,
             "message"=> "Products retrieved successfully.",
             "total" => $products->count(),
-            "data" => ProductResource::collection($products)
+            "data" => auth()->check()
+                ? ProductResource::collection($products)
+                : PublicProductResource::collection($products)
         ], 200);
     }
 

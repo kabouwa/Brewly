@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme {
+  --color-espresso: #2b1b16;
+  --color-dark-coffee: #3a241c;
+  --color-coffee: #5a3828;
+  --color-caramel: #b87941;
+  --color-cream: #f7f1e8;
+  --color-beige: #ede3d5;
+  --color-soft-white: #fffdf9;
+  --color-muted: #806c60;
+
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url('/src/assets/fonts/Inter/Inter-VariableFont_opsz\,wght.ttf');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Playfair Display";
+  src: url('/src/assets/fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf');
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+html {
+  scroll-behavior: smooth;
+}

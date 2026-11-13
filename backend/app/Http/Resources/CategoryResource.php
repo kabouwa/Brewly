@@ -8,6 +8,7 @@ use PhpParser\Node\Expr\BinaryOp\BooleanOr;
 
 class CategoryResource extends JsonResource
 {
+    
     /**
      * Transform the resource into an array.
      *

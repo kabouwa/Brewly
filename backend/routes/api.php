@@ -13,28 +13,36 @@ Route::prefix('v1')->group(function () {
     // Authentication
     Route::post('/login', [AuthController::class, 'login'])->name('login')->middleware('throttle:7,1');
 
-    Route::middleware(['auth:sanctum','throttle:60,1'])->group(function () {
+    Route::middleware('throttle:60,1')->group(function () {
 
-        Route::get('/user', [AuthController::class, 'user'])->name('user');
-        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+        // Public Routes
 
-        // Categories Resource
-        Route::apiResource('users', UserController::class);
-        Route::patch('/users/{user}/password', [UserController::class,'updatePassword'])->name('users.password');
+        Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 
-        // Categories Resource
-        Route::apiResource('categories', CategoryController::class);
-        Route::patch('categories/{category}/toggle', [CategoryController::class,'toggle'])->name('categories.toggle');
+        // Administration Route
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::get('/user', [AuthController::class, 'user'])->name('user');
+            Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-        // Product Resource
-        Route::apiResource('products', ProductController::class);
-        Route::patch('products/{product}/toggle', [ProductController::class,'toggle'])->name('products.toggle');
+            // Categories Resource
+            Route::apiResource('users', UserController::class);
+            Route::patch('/users/{user}/password', [UserController::class,'updatePassword'])->name('users.password');
 
-        // Order Resource
-        Route::apiResource('orders', OrderController::class);
-        Route::patch('orders/{order}/status', [OrderController::class, 'status'])->name('orders.status');;
+            // Categories Resource
+            Route::apiResource('categories', CategoryController::class);
+            Route::patch('categories/{category}/toggle', [CategoryController::class,'toggle'])->name('categories.toggle');
 
-        // Order Item Resource
-        Route::apiResource('order-items', OrderItemController::class);
+            // Product Resource
+            Route::apiResource('products', ProductController::class)->except('index');
+            Route::patch('products/{product}/toggle', [ProductController::class,'toggle'])->name('products.toggle');
+
+            // Order Resource
+            Route::apiResource('orders', OrderController::class);
+            Route::patch('orders/{order}/status', [OrderController::class, 'status'])->name('orders.status');;
+
+            // Order Item Resource
+            Route::apiResource('order-items', OrderItemController::class);
+        });
+
     });
 });
