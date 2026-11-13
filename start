@@ -1,0 +1,6 @@
+backend_host='localhost';backend_port=80;frontend_on_netwrok=True;import subprocess;from pathlib import Path;BASE_DIR = Path(__file__).resolve().parent;
+def run_backend(host: str = 'localhost', port: int = 8000):command = ['php', 'artisan', 'serve',f'--host={host}',f'--port={port}'];return subprocess.Popen(command,cwd=BASE_DIR / 'backend')
+def run_frontend(frontend_on_netwrok: bool = False):command = ['npm.cmd', 'run', 'dev','--', f'--host' if frontend_on_netwrok else ''];return subprocess.Popen(command,cwd=BASE_DIR / 'frontend')
+backend = run_backend(backend_host,backend_port);frontend = run_frontend(frontend_on_netwrok)
+try: backend.wait() ;frontend.wait()
+except KeyboardInterrupt: backend.terminate();frontend.terminate()
